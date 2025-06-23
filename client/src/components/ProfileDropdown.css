@@ -1,0 +1,206 @@
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+  margin-top: 2px;
+}
+
+.profile-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  height: 40px;
+  width: 40px;
+}
+
+.profile-button:hover {
+  transform: scale(1.05);
+}
+
+.profile-image {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-color);
+}
+
+.profile-icon {
+  font-size: 24px;
+  color: var(--primary-color);
+}
+
+.profile-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 280px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  margin-top: 8px;
+  overflow: hidden;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.profile-header {
+  padding: 16px;
+  background: var(--primary-color);
+  color: white;
+  position: relative;
+}
+
+.profile-header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-avatar {
+  flex-shrink: 0;
+}
+
+.profile-image-large {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+.profile-icon-large {
+  font-size: 48px;
+  color: white;
+}
+
+.profile-title {
+  flex-grow: 1;
+}
+
+.profile-title h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.profile-title p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.close-button:hover {
+  opacity: 1;
+}
+
+.profile-actions {
+  padding: 8px;
+  background: white;
+}
+
+.action-button {
+  width: 100%;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.action-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.action-button svg {
+  font-size: 16px;
+  color: var(--primary-color);
+}
+
+.logout-button {
+  color: var(--danger-color);
+}
+
+.logout-button svg {
+  color: var(--danger-color);
+}
+
+.divider {
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin: 8px 0;
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .profile-menu {
+  background: var(--dark-bg);
+  border: 1px solid var(--dark-border);
+}
+
+[data-theme="dark"] .profile-actions {
+  background: var(--dark-bg);
+}
+
+[data-theme="dark"] .action-button:hover {
+  background-color: var(--dark-hover);
+}
+
+[data-theme="dark"] .divider {
+  background-color: var(--dark-border);
+}
+
+/* RTL support */
+[dir="rtl"] .profile-menu {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .profile-header-content {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .action-button {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .close-button {
+  right: auto;
+  left: 8px;
+} 

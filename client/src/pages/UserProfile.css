@@ -1,0 +1,173 @@
+.user-profile-container {
+  background-color: #f8f9fa;
+}
+
+.profile-sidebar {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  height: fit-content;
+}
+
+.profile-sidebar .nav-link {
+  color: #6c757d;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  margin-bottom: 0.5rem;
+}
+
+.profile-sidebar .nav-link:hover {
+  background-color: #f8f9fa;
+  color: #0d6efd;
+}
+
+.profile-sidebar .nav-link.active {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.profile-sidebar .nav-link i {
+  width: 20px;
+  text-align: center;
+  margin-right: 10px;
+}
+
+.profile-content {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+.profile-header {
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.profile-header h4 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.profile-header p {
+  color: #6c757d;
+  margin-bottom: 0;
+}
+
+.profile-info-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.profile-info-card label {
+  color: #6c757d;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.profile-info-card .form-control {
+  background-color: white;
+  border: 1px solid #dee2e6;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+}
+
+.profile-info-card .form-control:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
+.booking-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.booking-table th {
+  background-color: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+  padding: 1rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.booking-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+  color: #6c757d;
+}
+
+.booking-table tr:last-child td {
+  border-bottom: none;
+}
+
+.booking-table .badge {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.password-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.password-form label {
+  color: #6c757d;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.password-form .form-control {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+}
+
+.password-form .form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+.password-form .btn-primary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.alert {
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.alert-danger {
+  background-color: #fff5f5;
+  border-color: #feb2b2;
+  color: #c53030;
+}
+
+.alert-success {
+  background-color: #f0fff4;
+  border-color: #9ae6b4;
+  color: #2f855a;
+}
+
+@media (max-width: 768px) {
+  .profile-sidebar {
+    margin-bottom: 2rem;
+  }
+  
+  .profile-content {
+    padding: 1.5rem;
+  }
+  
+  .booking-table {
+    display: block;
+    overflow-x: auto;
+  }
+} 
