@@ -5,6 +5,10 @@ import './RoomCard.css'; // We'll create a dedicated CSS file for this component
 
 const RoomCard = ({ room, onClick }) => {
   const { _id, type, description, price, capacity, size, beds, image } = room;
+  const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const imageUrl = room.image
+    ? (room.image.startsWith('http') ? room.image : `${backendUrl}/uploads/${room.image}`)
+    : "/default-room.jpg";
 
   const cardVariants = {
     hidden: { opacity: 0, y: 40, scale: 0.95 },
@@ -28,12 +32,12 @@ const RoomCard = ({ room, onClick }) => {
       layoutId={`room-card-${_id}`}
     >
       <motion.img
-        src={image || "https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg"}
+        src={imageUrl}
         className="bg-image"
         alt={type || "Room"}
         onError={(e) => {
           e.target.onerror = null;
-          e.target.src = "https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg";
+          e.target.src = "/default-room.jpg";
         }}
       />
       <div className="overlay"></div>

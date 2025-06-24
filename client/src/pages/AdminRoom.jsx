@@ -39,6 +39,8 @@ const AdminRoom = () => {
     image: null,
   });
 
+  const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
   // Available amenities with icons
   const availableAmenities = [
     { id: "WiFi", label: "WiFi", icon: <FaWifi /> },
@@ -337,6 +339,13 @@ const AdminRoom = () => {
     setShowAddModal(true);
   };
 
+  const getRoomImageUrl = (img) => {
+    if (!img) return "/default-room.jpg";
+    if (img.startsWith("http")) return img;
+    if (img.startsWith("/uploads/")) return `${backendUrl}${img}`;
+    return `${backendUrl}/uploads/${img}`;
+  };
+
   return (
     <div className="container-fluid">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -374,12 +383,12 @@ const AdminRoom = () => {
                     <td>
                       {room.image ? (
                         <img
-                          src={room.image}
+                          src={getRoomImageUrl(room.image)}
                           alt={`Room ${room.roomNumber}`}
                           className="room-thumbnail"
                           onError={(e) => {
                             e.target.onerror = null;
-                            e.target.src = "https://via.placeholder.com/100x100?text=No+Image";
+                            e.target.src = "/default-room.jpg";
                           }}
                         />
                       ) : (
@@ -529,7 +538,7 @@ const AdminRoom = () => {
                       {imagePreview && (
                         <div className="mt-2">
                           <img
-                            src={imagePreview}
+                            src={imagePreview ? `${backendUrl}/uploads/${imagePreview}` : "/default-room.jpg"}
                             alt="Preview"
                             className="img-thumbnail"
                             style={{ maxWidth: "200px" }}
@@ -708,7 +717,7 @@ const AdminRoom = () => {
                       {imagePreview && (
                         <div className="mt-2">
                           <img
-                            src={imagePreview}
+                            src={imagePreview ? `${backendUrl}/uploads/${imagePreview}` : "/default-room.jpg"}
                             alt="Preview"
                             className="img-thumbnail"
                             style={{ maxWidth: "200px" }}
@@ -738,11 +747,11 @@ const AdminRoom = () => {
                           <div key={amenity.id} className="amenity-item">
                             <input
                               type="checkbox"
-                              id={`edit-${amenity.id}`}
+                              id={amenity.id}
                               checked={formData.amenities.includes(amenity.id)}
                               onChange={() => handleAmenitiesChange(amenity.id)}
                             />
-                            <label htmlFor={`edit-${amenity.id}`}>
+                            <label htmlFor={amenity.id}>
                               {amenity.icon} {amenity.label}
                             </label>
                           </div>

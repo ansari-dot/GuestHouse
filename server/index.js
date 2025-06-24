@@ -1,7 +1,7 @@
  import express from "express";
  import dotenv from "dotenv";
  import connectDB from "./config/db.js";
- import helmet from 'helmet';
+ //import helmet from 'helmet';
  import cors from 'cors';
  import cookieParser from "cookie-parser";
  import path from "path";
@@ -30,16 +30,17 @@
  const app = express();
 
  // Security middleware
- app.use(helmet({
-     contentSecurityPolicy: {
-         directives: {
-             defaultSrc: ["'self'"],
-             scriptSrc: ["'self'", "'unsafe-inline'"],
-             styleSrc: ["'self'", "'unsafe-inline'"],
-             imgSrc: ["'self'", "data:", "blob:"],
-         },
-     },
- }));
+ /*app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "blob:", "http://localhost:3000"],
+      },
+    },
+  })); */
+  
 
  // Rate limiting
  const limiter = rateLimit({

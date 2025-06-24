@@ -22,6 +22,9 @@ const ProfileDropdown = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
+  const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const profileImageUrl = user.profileImage ? `${backendUrl}/uploads/${user.profileImage}` : "/default-avatar.png";
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -64,7 +67,7 @@ const ProfileDropdown = () => {
       >
         {user?.profileImage ? (
           <img 
-            src={user.profileImage} 
+            src={profileImageUrl} 
             alt={user.username} 
             className="profile-image"
           />
@@ -80,7 +83,7 @@ const ProfileDropdown = () => {
               <div className="profile-avatar">
                 {user?.profileImage ? (
                   <img 
-                    src={user.profileImage} 
+                    src={profileImageUrl} 
                     alt={user.username} 
                     className="profile-image-large"
                   />

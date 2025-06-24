@@ -47,6 +47,8 @@ const Testimonials = () => {
       .map((_, index) => <FaStar key={index} className={index < rating ? "star-filled" : "star-empty"} />)
   }
 
+  const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
   return (
     <section className="py-5" data-aos="fade-up">
       <div className="container">
@@ -95,7 +97,7 @@ const Testimonials = () => {
                     <p className="testimonial-text">{testimonial.text}</p>
                     <div className="testimonial-author">
                       <img
-                        src={testimonial.image}
+                        src={testimonial.image ? `${backendUrl}/uploads/${testimonial.image}` : "/default-avatar.png"}
                         alt={testimonial.name}
                         className="testimonial-avatar"
                       />

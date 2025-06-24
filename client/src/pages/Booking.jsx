@@ -3,11 +3,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchRooms } from "../redux/slices/roomsSlice";
-import { FaCalendarAlt, FaUsers, FaBed, FaCreditCard, FaArrowLeft } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaUsers,
+  FaBed,
+  FaCreditCard,
+  FaArrowLeft,
+} from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axiosInstance from "../utils/axios";
-//import "./Booking.css"
 
 const Booking = () => {
   const dispatch = useDispatch();
@@ -16,7 +21,6 @@ const Booking = () => {
   const { rooms, loading, error } = useSelector((state) => state.rooms);
   const { user } = useSelector((state) => state.auth);
 
-  // Get room data from navigation state (passed from Rooms page)
   const selectedRoomData = location.state?.selectedRoom;
   const roomId = location.state?.roomId;
   const roomType = location.state?.roomType;
@@ -47,21 +51,22 @@ const Booking = () => {
   const [bookingStatus, setBookingStatus] = useState("pending");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
   useEffect(() => {
     dispatch(fetchRooms());
+    checkPaymentStatus();
   }, [dispatch]);
 
   useEffect(() => {
-    // If we have room data from navigation state, use it
     if (selectedRoomData) {
       setSelectedRoom(selectedRoomData);
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         roomId: selectedRoomData._id || selectedRoomData.id,
-        guests: selectedRoomData.capacity || 1
+        guests: selectedRoomData.capacity || 1,
       }));
     } else if (formData.roomId && Array.isArray(rooms)) {
-      // Otherwise, find the room from the rooms list
       const room = rooms.find((r) => (r._id || r.id) === formData.roomId);
       setSelectedRoom(room);
     }
@@ -87,34 +92,55 @@ const Booking = () => {
     }
   }, [formData.checkIn, formData.checkOut, selectedRoom]);
 
-  // Poll for booking status
-  useEffect(() => {
-    if (bookingId) {
-      const interval = setInterval(async () => {
-        try {
-          const response = await axiosInstance.get(`/booking/${bookingId}/status`);
-          if (response.data.success) {
-            const newStatus = response.data.status;
-            if (newStatus !== bookingStatus) {
-              setBookingStatus(newStatus);
-              if (newStatus === "confirmed") {
-                toast.success("Payment confirmed! Your booking is now confirmed.", {
-                  position: "top-right",
-                  autoClose: 3000,
-                  theme: "light",
-                });
-                clearInterval(interval);
-              }
-            }
-          }
-        } catch (err) {
-          console.error("Status check error:", err);
-        }
-      }, 5000);
+  const checkPaymentStatus = async () => {
+    const params = new URLSearchParams(window.location.search);
+    const bookingId = params.get("bookingId");
+    const status = params.get("status");
 
-      return () => clearInterval(interval);
+    if (bookingId && status) {
+      try {
+        if (status === "success") {
+          const transactionId = params.get("transaction_id");
+          const response = await axiosInstance.post("/booking/verify-payment", {
+            bookingId,
+            transactionId,
+          });
+
+          if (response.data.success) {
+            toast.success("Payment confirmed! Your booking is now confirmed.", {
+              position: "top-right",
+              autoClose: 3000,
+              theme: "light",
+            });
+            setBookingStatus("confirmed");
+          } else {
+            toast.error(
+              "Payment verification failed. Please contact support.",
+              {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "light",
+              }
+            );
+          }
+        } else if (status === "failed") {
+          toast.error("Payment failed. Please try again.", {
+            position: "top-right",
+            autoClose: 3000,
+            theme: "light",
+          });
+        }
+
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+      } catch (err) {
+        console.error("Payment status check error:", err);
+      }
     }
-  }, [bookingId, bookingStatus]);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -141,7 +167,10 @@ const Booking = () => {
       toast.error("Please select a payment method");
       return false;
     }
-    if (formData.paymentMethod === "credit_card" && (!formData.cardNumber || !formData.expiryDate || !formData.cvv)) {
+    if (
+      formData.paymentMethod === "credit_card" &&
+      (!formData.cardNumber || !formData.expiryDate || !formData.cvv)
+    ) {
       toast.error("Please fill in all credit card details");
       return false;
     }
@@ -172,30 +201,50 @@ const Booking = () => {
     }
 
     try {
-      const response = await axiosInstance.post("/booking", formData);
+      const response = await axiosInstance.post("/booking", formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.data.success) {
-        toast.success("Your booking request has been submitted successfully! Awaiting payment confirmation.", {
-          position: "top-right",
-          autoClose: 3000,
-          theme: "light",
-        });
-        setBookingId(response.data.bookingId);
-        setBookingStatus("pending");
+        if (formData.paymentMethod === "fastpay" && response.data.paymentUrl) {
+          window.location.href = response.data.paymentUrl;
+        } else {
+          toast.success(
+            formData.paymentMethod === "cash_on_arrival"
+              ? "Your booking has been confirmed!"
+              : "Your booking request has been submitted successfully!",
+            {
+              position: "top-right",
+              autoClose: 3000,
+              theme: "light",
+            }
+          );
+          setBookingId(response.data.bookingId);
+        }
       } else {
-        toast.error(response.data.message || "Your booking request has failed! Please try again.", {
-          position: "top-right",
-          autoClose: 3000,
-          theme: "light",
-        });
+        toast.error(
+          response.data.message ||
+            "Your booking request has failed! Please try again.",
+          {
+            position: "top-right",
+            autoClose: 3000,
+            theme: "light",
+          }
+        );
       }
     } catch (err) {
       console.error("Booking error:", err);
-      toast.error(err.response?.data?.message || "Failed to submit booking. Please try again.", {
-        position: "top-right",
-        autoClose: 3000,
-        theme: "light",
-      });
+      toast.error(
+        err.response?.data?.message ||
+          "Failed to submit booking. Please try again.",
+        {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "light",
+        }
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -268,39 +317,54 @@ const Booking = () => {
 
       <section className="py-5">
         <div className="container">
-          {/* Back Button */}
           <div className="mb-4">
-            <button 
+            <button
               className="btn btn-outline-secondary"
-              onClick={() => navigate('/rooms')}
-            >
+              onClick={() => navigate("/rooms")}>
               <FaArrowLeft className="me-2" />
               Back to Rooms
             </button>
           </div>
 
-          {/* Selected Room Display */}
           {selectedRoom && (
             <div className="card border-0 shadow mb-4" data-aos="fade-up">
               <div className="card-body">
                 <h5 className="card-title text-primary mb-3">Selected Room</h5>
                 <div className="row align-items-center">
                   <div className="col-md-3">
-                    <img 
-                      src={selectedRoom.image || "https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg"} 
-                      alt={selectedRoom.type} 
+                    <img
+                      src={
+                        selectedRoom.image
+                          ? `${backendUrl}/uploads/${selectedRoom.image}`
+                          : "/default-room.jpg"
+                      }
+                      alt={selectedRoom.type}
                       className="img-fluid rounded"
-                      style={{ height: '120px', objectFit: 'cover', width: '100%' }}
+                      style={{
+                        height: "120px",
+                        objectFit: "cover",
+                        width: "100%",
+                      }}
                     />
                   </div>
                   <div className="col-md-9">
-                    <h6 className="mb-2">{selectedRoom.type} - Room #{selectedRoom.roomNumber}</h6>
-                    <p className="text-muted mb-2">{selectedRoom.description}</p>
+                    <h6 className="mb-2">
+                      {selectedRoom.type} - Room #{selectedRoom.roomNumber}
+                    </h6>
+                    <p className="text-muted mb-2">
+                      {selectedRoom.description}
+                    </p>
                     <div className="d-flex justify-content-between align-items-center">
                       <div>
-                        <span className="badge bg-primary me-2">${selectedRoom.price}/night</span>
-                        <span className="badge bg-secondary me-2">{selectedRoom.capacity} Guests</span>
-                        <span className="badge bg-info">{selectedRoom.size} sq ft</span>
+                        <span className="badge bg-primary me-2">
+                          ${selectedRoom.price}/night
+                        </span>
+                        <span className="badge bg-secondary me-2">
+                          {selectedRoom.capacity} Guests
+                        </span>
+                        <span className="badge bg-info">
+                          {selectedRoom.size} sq ft
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -326,7 +390,10 @@ const Booking = () => {
                         <div className="col-12">
                           {selectedRoomData ? (
                             <div className="alert alert-info">
-                              <strong>Pre-selected Room:</strong> {selectedRoomData.type} - Room #{selectedRoomData.roomNumber} (${selectedRoomData.price}/night)
+                              <strong>Pre-selected Room:</strong>{" "}
+                              {selectedRoomData.type} - Room #
+                              {selectedRoomData.roomNumber} ($
+                              {selectedRoomData.price}/night)
                             </div>
                           ) : (
                             <select
@@ -341,8 +408,8 @@ const Booking = () => {
                                   <option
                                     key={room._id || room.id}
                                     value={room._id || room.id}>
-                                    {room.type || "Unnamed Room"} - Room #{room.roomNumber} - $
-                                    {room.price || 0}/night
+                                    {room.type || "Unnamed Room"} - Room #
+                                    {room.roomNumber} - ${room.price || 0}/night
                                   </option>
                                 ))}
                             </select>
@@ -459,14 +526,19 @@ const Booking = () => {
                             <option value="">Select payment method</option>
                             <option value="credit_card">Credit Card</option>
                             <option value="paypal">PayPal</option>
-                            <option value="cash_on_arrival">Cash on Arrival</option>
+                            <option value="fastpay">FastPay (Pakistan)</option>
+                            <option value="cash_on_arrival">
+                              Cash on Arrival
+                            </option>
                           </select>
                         </div>
 
                         {formData.paymentMethod === "credit_card" && (
                           <>
                             <div className="col-md-6">
-                              <label className="form-label">Card Number *</label>
+                              <label className="form-label">
+                                Card Number *
+                              </label>
                               <input
                                 type="text"
                                 className="form-control"
@@ -478,7 +550,9 @@ const Booking = () => {
                               />
                             </div>
                             <div className="col-md-3">
-                              <label className="form-label">Expiry Date *</label>
+                              <label className="form-label">
+                                Expiry Date *
+                              </label>
                               <input
                                 type="text"
                                 className="form-control"
@@ -521,7 +595,9 @@ const Booking = () => {
                     </div>
 
                     <div className="mb-4">
-                      <label className="form-label">Special Requests (Optional)</label>
+                      <label className="form-label">
+                        Special Requests (Optional)
+                      </label>
                       <textarea
                         className="form-control"
                         name="specialRequests"
@@ -553,28 +629,40 @@ const Booking = () => {
             </div>
 
             <div className="col-lg-4">
-              <div className="card border-0 shadow" data-aos="fade-up" data-aos-delay="100">
+              <div
+                className="card border-0 shadow"
+                data-aos="fade-up"
+                data-aos-delay="100">
                 <div className="card-body p-4">
-                  <h4 className="card-title text-primary mb-4">Booking Summary</h4>
-                  
+                  <h4 className="card-title text-primary mb-4">
+                    Booking Summary
+                  </h4>
+
                   {selectedRoom && (
                     <div className="booking-summary">
                       <div className="room-info mb-3">
-                        <h6 className="fw-bold">{selectedRoom.type || "Selected Room"}</h6>
+                        <h6 className="fw-bold">
+                          {selectedRoom.type || "Selected Room"}
+                        </h6>
                         <p className="text-muted mb-2">
-                          Room #{selectedRoom.roomNumber || "N/A"} - {selectedRoom.capacity || 0} Guests
+                          Room #{selectedRoom.roomNumber || "N/A"} -{" "}
+                          {selectedRoom.capacity || 0} Guests
                         </p>
-                        <p className="text-muted mb-0">{selectedRoom.description}</p>
+                        <p className="text-muted mb-0">
+                          {selectedRoom.description}
+                        </p>
                       </div>
 
                       {formData.checkIn && formData.checkOut && (
                         <div className="booking-dates mb-3">
                           <h6 className="fw-bold">Dates</h6>
                           <p className="mb-1">
-                            <strong>Check-in:</strong> {new Date(formData.checkIn).toLocaleDateString()}
+                            <strong>Check-in:</strong>{" "}
+                            {new Date(formData.checkIn).toLocaleDateString()}
                           </p>
                           <p className="mb-0">
-                            <strong>Check-out:</strong> {new Date(formData.checkOut).toLocaleDateString()}
+                            <strong>Check-out:</strong>{" "}
+                            {new Date(formData.checkOut).toLocaleDateString()}
                           </p>
                           <p className="text-primary fw-bold">
                             {nights} night{nights !== 1 ? "s" : ""}

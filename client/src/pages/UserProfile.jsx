@@ -40,6 +40,9 @@ const UserProfile = () => {
     confirmPassword: "",
   });
 
+  const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const profileImageUrl = previewImage ? previewImage : (user?.profileImage ? `${backendUrl}/uploads/${user.profileImage}` : "/default-avatar.png");
+
   useEffect(() => {
     if (!user) {
       navigate("/login");
@@ -207,7 +210,7 @@ const UserProfile = () => {
           <div className="text-center mb-4">
             <div className="position-relative d-inline-block">
               <img
-                src={previewImage || user?.profileImage || "/default-avatar.png"}
+                src={profileImageUrl}
                 alt="Profile"
                 className="rounded-circle"
                 style={{ width: "150px", height: "150px", objectFit: "cover" }}

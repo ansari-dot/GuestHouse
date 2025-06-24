@@ -14,6 +14,8 @@ const Rooms = () => {
   const [selectedRoom, setSelectedRoom] = useState(null)
   const [showModal, setShowModal] = useState(false)
 
+  const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
   useEffect(() => {
     dispatch(fetchRooms())
   }, [dispatch])
@@ -21,6 +23,7 @@ const Rooms = () => {
   useEffect(() => {
     if (location.state && location.state.selectedRoomId && rooms.length > 0) {
       const roomFromState = rooms.find(r => r._id === location.state.selectedRoomId);
+      console.log(roomFromState);
       if (roomFromState) {
         setSelectedRoom(roomFromState);
         setShowModal(true);
@@ -140,6 +143,13 @@ const Rooms = () => {
     }
   }
 
+  const getRoomImageUrl = (img) => {
+    if (!img) return "/default-room.jpg";
+    if (img.startsWith("http")) return img;
+    if (img.startsWith("/uploads/")) return `${backendUrl}${img}`;
+    return `${backendUrl}/uploads/${img}`;
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -216,12 +226,12 @@ const Rooms = () => {
                 layoutId={`room-card-${room._id}`}
               >
                 <motion.img 
-                  src={room.image || "https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg"} 
+                  src={getRoomImageUrl(room.image)} 
                   className="bg-image" 
                   alt={room.type || "Room"} 
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = "https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg";
+                    e.target.src = "/default-room.jpg";
                   }}
                 />
                 <div className="overlay"></div>
@@ -290,12 +300,12 @@ const Rooms = () => {
                     <div className="row">
                       <div className="col-lg-6">
                         <img 
-                          src={selectedRoom.image} 
+                          src={getRoomImageUrl(selectedRoom.image)} 
                           alt={selectedRoom.type} 
                           className="img-fluid rounded"
                           onError={(e) => {
                               e.target.onerror = null
-                              e.target.src = "https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg"
+                              e.target.src = "/default-room.jpg"
                           }}
                         />
                       </div>

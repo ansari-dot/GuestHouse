@@ -29,6 +29,10 @@ const galleryData = {
   ],
 }
 
+const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+const getImageUrl = (src) => src ? (src.startsWith('http') ? src : `${backendUrl}/uploads/${src}`) : "/default-room.jpg";
+
 const Gallery = () => {
   const [activeCategory, setActiveCategory] = useState("all")
   const [filteredImages, setFilteredImages] = useState([])
@@ -117,7 +121,7 @@ const Gallery = () => {
                   style={{ height: "250px" }}
                 >
                   <img 
-                    src={image.src} 
+                    src={getImageUrl(image.src)} 
                     alt={image.title} 
                     className="img-fluid w-100 h-100"
                     style={{ objectFit: "cover", transition: "transform 0.5s ease" }}
@@ -170,7 +174,7 @@ const Gallery = () => {
               {filteredImages.map((image) => (
                 <SwiperSlide key={image.id}>
                   <div className="swiper-zoom-container">
-                    <img src={image.src} alt={image.title} className="img-fluid w-100" />
+                    <img src={getImageUrl(image.src)} alt={image.title} className="img-fluid w-100" />
                   </div>
                   <div className="text-center text-white mt-3">
                     <h5>{image.title}</h5>
@@ -191,7 +195,7 @@ const Gallery = () => {
               {filteredImages.map((image) => (
                 <SwiperSlide key={image.id}>
                   <img 
-                    src={image.src} 
+                    src={getImageUrl(image.src)} 
                     alt={image.title} 
                     className="img-fluid w-100 h-100 rounded"
                     style={{ objectFit: "cover", opacity: 0.5, cursor: "pointer" }}

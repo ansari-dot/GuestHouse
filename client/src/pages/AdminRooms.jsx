@@ -16,6 +16,7 @@ const AdminRooms = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterType, setFilterType] = useState("")
   const [filteredRooms, setFilteredRooms] = useState([])
+  const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3000"
 
   useEffect(() => {
     dispatch(fetchRooms())
@@ -62,6 +63,13 @@ const AdminRooms = () => {
 
   const roomTypes = [...new Set(rooms.map((room) => room.type))]
 
+  const getRoomImageUrl = (img) => {
+    if (!img) return "/default-room.jpg";
+    if (img.startsWith("http")) return img;
+    if (img.startsWith("/uploads/")) return `${backendUrl}${img}`;
+    return `${backendUrl}/uploads/${img}`;
+  };
+
   return (
     <div className="d-flex">
       <AdminSidebar />
@@ -83,6 +91,7 @@ const AdminRooms = () => {
                     <th>Room Name</th>
                     <th>Price</th>
                     <th>Status</th>
+                    <th>Image</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -100,6 +109,21 @@ const AdminRooms = () => {
                         >
                           {room.available ? "Available" : "Unavailable"}
                         </span>
+                      </td>
+                      <td>
+                        {room.image ? (
+                          <img
+                            src={getRoomImageUrl(room.image)}
+                            alt={`Room ${room.roomNumber}`}
+                            className="room-thumbnail"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "/default-room.jpg";
+                            }}
+                          />
+                        ) : (
+                          <div className="no-image">No Image</div>
+                        )}
                       </td>
                       <td>
                         <button
