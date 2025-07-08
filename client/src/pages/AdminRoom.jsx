@@ -29,6 +29,7 @@ const AdminRoom = () => {
   const [formErrors, setFormErrors] = useState({});
 
   const [formData, setFormData] = useState({
+    roomName: "",
     roomNumber: "",
     type: "",
     price: "",
@@ -120,6 +121,10 @@ const AdminRoom = () => {
   // Validation function
   const validateForm = () => {
     const errors = {};
+
+    if (!formData.roomName.trim()) {
+      errors.roomName = "Room name is required";
+    }
 
     // Room Number validation (must be a number)
     if (!formData.roomNumber || isNaN(formData.roomNumber)) {
@@ -214,6 +219,7 @@ const AdminRoom = () => {
       toast.success("Room added successfully!");
       setShowAddModal(false);
       setFormData({
+        roomName: "",
         roomNumber: "",
         type: "",
         price: "",
@@ -254,20 +260,17 @@ const AdminRoom = () => {
         }
       });
 
-      await axiosInstance.put(
-        `/rooms/${selectedRoom._id}`,
-        formDataToSend,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axiosInstance.put(`/rooms/${selectedRoom._id}`, formDataToSend, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       toast.success("Room updated successfully!");
       setShowEditModal(false);
       setSelectedRoom(null);
       setFormData({
+        roomName: "",
         roomNumber: "",
         type: "",
         price: "",
@@ -307,6 +310,7 @@ const AdminRoom = () => {
   const openEditModal = (room) => {
     setSelectedRoom(room);
     setFormData({
+      roomName: room.roomName || "",
       roomNumber: room.roomNumber || "",
       type: room.type || "",
       price: room.price || "",
@@ -325,6 +329,7 @@ const AdminRoom = () => {
   const openAddModal = async () => {
     const nextRoomNumber = await getNextRoomNumber();
     setFormData({
+      roomName: "",
       roomNumber: nextRoomNumber,
       type: "",
       price: "",
@@ -350,9 +355,7 @@ const AdminRoom = () => {
     <div className="container-fluid">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Manage Rooms</h2>
-        <button
-          className="btn btn-primary"
-          onClick={openAddModal}>
+        <button className="btn btn-primary" onClick={openAddModal}>
           <FaPlus className="me-2" /> Add New Room
         </button>
       </div>
@@ -369,6 +372,7 @@ const AdminRoom = () => {
             <thead>
               <tr>
                 <th>Image</th>
+                <th>Room Name</th>
                 <th>Room Number</th>
                 <th>Type</th>
                 <th>Price</th>
@@ -395,6 +399,7 @@ const AdminRoom = () => {
                         <div className="no-image">No Image</div>
                       )}
                     </td>
+                    <td>{room.roomName}</td>
                     <td>{room.roomNumber}</td>
                     <td>{room.type}</td>
                     <td>${room.price}</td>
@@ -415,7 +420,7 @@ const AdminRoom = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="text-center">
+                  <td colSpan="7" className="text-center">
                     No rooms found
                   </td>
                 </tr>
@@ -444,24 +449,49 @@ const AdminRoom = () => {
                 <div className="row">
                   <div className="col-md-6">
                     <div className="mb-3">
+                      <label className="form-label">Room Name *</label>
+                      <input
+                        type="text"
+                        className={`form-control ${
+                          formErrors.roomName ? "is-invalid" : ""
+                        }`}
+                        name="roomName"
+                        value={formData.roomName}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      {formErrors.roomName && (
+                        <div className="invalid-feedback">
+                          {formErrors.roomName}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mb-3">
                       <label className="form-label">Room Number *</label>
                       <input
                         type="number"
-                        className={`form-control ${formErrors.roomNumber ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          formErrors.roomNumber ? "is-invalid" : ""
+                        }`}
                         name="roomNumber"
                         value={formData.roomNumber}
                         onChange={handleInputChange}
                         required
                       />
                       {formErrors.roomNumber && (
-                        <div className="invalid-feedback">{formErrors.roomNumber}</div>
+                        <div className="invalid-feedback">
+                          {formErrors.roomNumber}
+                        </div>
                       )}
                     </div>
 
                     <div className="mb-3">
                       <label className="form-label">Room Type *</label>
                       <select
-                        className={`form-select ${formErrors.type ? "is-invalid" : ""}`}
+                        className={`form-select ${
+                          formErrors.type ? "is-invalid" : ""
+                        }`}
                         name="type"
                         value={formData.type}
                         onChange={handleInputChange}
@@ -472,7 +502,9 @@ const AdminRoom = () => {
                         <option value="Suite">Suite</option>
                       </select>
                       {formErrors.type && (
-                        <div className="invalid-feedback">{formErrors.type}</div>
+                        <div className="invalid-feedback">
+                          {formErrors.type}
+                        </div>
                       )}
                     </div>
 
@@ -480,7 +512,9 @@ const AdminRoom = () => {
                       <label className="form-label">Price per Night *</label>
                       <input
                         type="number"
-                        className={`form-control ${formErrors.price ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          formErrors.price ? "is-invalid" : ""
+                        }`}
                         name="price"
                         value={formData.price}
                         onChange={handleInputChange}
@@ -489,15 +523,21 @@ const AdminRoom = () => {
                         required
                       />
                       {formErrors.price && (
-                        <div className="invalid-feedback">{formErrors.price}</div>
+                        <div className="invalid-feedback">
+                          {formErrors.price}
+                        </div>
                       )}
                     </div>
+                  </div>
 
+                  <div className="col-md-6">
                     <div className="mb-3">
                       <label className="form-label">Capacity *</label>
                       <input
                         type="number"
-                        className={`form-control ${formErrors.capacity ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          formErrors.capacity ? "is-invalid" : ""
+                        }`}
                         name="capacity"
                         value={formData.capacity}
                         onChange={handleInputChange}
@@ -505,7 +545,9 @@ const AdminRoom = () => {
                         required
                       />
                       {formErrors.capacity && (
-                        <div className="invalid-feedback">{formErrors.capacity}</div>
+                        <div className="invalid-feedback">
+                          {formErrors.capacity}
+                        </div>
                       )}
                     </div>
 
@@ -513,7 +555,9 @@ const AdminRoom = () => {
                       <label className="form-label">Size (sq ft) *</label>
                       <input
                         type="number"
-                        className={`form-control ${formErrors.size ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          formErrors.size ? "is-invalid" : ""
+                        }`}
                         name="size"
                         value={formData.size}
                         onChange={handleInputChange}
@@ -521,12 +565,12 @@ const AdminRoom = () => {
                         required
                       />
                       {formErrors.size && (
-                        <div className="invalid-feedback">{formErrors.size}</div>
+                        <div className="invalid-feedback">
+                          {formErrors.size}
+                        </div>
                       )}
                     </div>
-                  </div>
 
-                  <div className="col-md-6">
                     <div className="mb-3">
                       <label className="form-label">Room Image</label>
                       <input
@@ -538,7 +582,7 @@ const AdminRoom = () => {
                       {imagePreview && (
                         <div className="mt-2">
                           <img
-                            src={imagePreview ? `${backendUrl}/uploads/${imagePreview}` : "/default-room.jpg"}
+                            src={imagePreview}
                             alt="Preview"
                             className="img-thumbnail"
                             style={{ maxWidth: "200px" }}
@@ -546,18 +590,26 @@ const AdminRoom = () => {
                         </div>
                       )}
                     </div>
+                  </div>
+                </div>
 
+                <div className="row">
+                  <div className="col-12">
                     <div className="mb-3">
                       <label className="form-label">Description *</label>
                       <textarea
-                        className={`form-control ${formErrors.description ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          formErrors.description ? "is-invalid" : ""
+                        }`}
                         name="description"
                         value={formData.description}
                         onChange={handleInputChange}
                         rows="3"
                         required></textarea>
                       {formErrors.description && (
-                        <div className="invalid-feedback">{formErrors.description}</div>
+                        <div className="invalid-feedback">
+                          {formErrors.description}
+                        </div>
                       )}
                     </div>
 
@@ -579,7 +631,9 @@ const AdminRoom = () => {
                         ))}
                       </div>
                       {formErrors.amenities && (
-                        <div className="text-danger small">{formErrors.amenities}</div>
+                        <div className="text-danger small">
+                          {formErrors.amenities}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -623,24 +677,49 @@ const AdminRoom = () => {
                 <div className="row">
                   <div className="col-md-6">
                     <div className="mb-3">
+                      <label className="form-label">Room Name *</label>
+                      <input
+                        type="text"
+                        className={`form-control ${
+                          formErrors.roomName ? "is-invalid" : ""
+                        }`}
+                        name="roomName"
+                        value={formData.roomName}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      {formErrors.roomName && (
+                        <div className="invalid-feedback">
+                          {formErrors.roomName}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mb-3">
                       <label className="form-label">Room Number *</label>
                       <input
                         type="number"
-                        className={`form-control ${formErrors.roomNumber ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          formErrors.roomNumber ? "is-invalid" : ""
+                        }`}
                         name="roomNumber"
                         value={formData.roomNumber}
                         onChange={handleInputChange}
                         required
                       />
                       {formErrors.roomNumber && (
-                        <div className="invalid-feedback">{formErrors.roomNumber}</div>
+                        <div className="invalid-feedback">
+                          {formErrors.roomNumber}
+                        </div>
                       )}
                     </div>
 
                     <div className="mb-3">
                       <label className="form-label">Room Type *</label>
                       <select
-                        className={`form-select ${formErrors.type ? "is-invalid" : ""}`}
+                        className={`form-select ${
+                          formErrors.type ? "is-invalid" : ""
+                        }`}
                         name="type"
                         value={formData.type}
                         onChange={handleInputChange}
@@ -651,7 +730,9 @@ const AdminRoom = () => {
                         <option value="Suite">Suite</option>
                       </select>
                       {formErrors.type && (
-                        <div className="invalid-feedback">{formErrors.type}</div>
+                        <div className="invalid-feedback">
+                          {formErrors.type}
+                        </div>
                       )}
                     </div>
 
@@ -659,7 +740,9 @@ const AdminRoom = () => {
                       <label className="form-label">Price per Night *</label>
                       <input
                         type="number"
-                        className={`form-control ${formErrors.price ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          formErrors.price ? "is-invalid" : ""
+                        }`}
                         name="price"
                         value={formData.price}
                         onChange={handleInputChange}
@@ -668,15 +751,21 @@ const AdminRoom = () => {
                         required
                       />
                       {formErrors.price && (
-                        <div className="invalid-feedback">{formErrors.price}</div>
+                        <div className="invalid-feedback">
+                          {formErrors.price}
+                        </div>
                       )}
                     </div>
+                  </div>
 
+                  <div className="col-md-6">
                     <div className="mb-3">
                       <label className="form-label">Capacity *</label>
                       <input
                         type="number"
-                        className={`form-control ${formErrors.capacity ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          formErrors.capacity ? "is-invalid" : ""
+                        }`}
                         name="capacity"
                         value={formData.capacity}
                         onChange={handleInputChange}
@@ -684,7 +773,9 @@ const AdminRoom = () => {
                         required
                       />
                       {formErrors.capacity && (
-                        <div className="invalid-feedback">{formErrors.capacity}</div>
+                        <div className="invalid-feedback">
+                          {formErrors.capacity}
+                        </div>
                       )}
                     </div>
 
@@ -692,7 +783,9 @@ const AdminRoom = () => {
                       <label className="form-label">Size (sq ft) *</label>
                       <input
                         type="number"
-                        className={`form-control ${formErrors.size ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          formErrors.size ? "is-invalid" : ""
+                        }`}
                         name="size"
                         value={formData.size}
                         onChange={handleInputChange}
@@ -700,12 +793,12 @@ const AdminRoom = () => {
                         required
                       />
                       {formErrors.size && (
-                        <div className="invalid-feedback">{formErrors.size}</div>
+                        <div className="invalid-feedback">
+                          {formErrors.size}
+                        </div>
                       )}
                     </div>
-                  </div>
 
-                  <div className="col-md-6">
                     <div className="mb-3">
                       <label className="form-label">Room Image</label>
                       <input
@@ -717,7 +810,7 @@ const AdminRoom = () => {
                       {imagePreview && (
                         <div className="mt-2">
                           <img
-                            src={imagePreview ? `${backendUrl}/uploads/${imagePreview}` : "/default-room.jpg"}
+                            src={imagePreview}
                             alt="Preview"
                             className="img-thumbnail"
                             style={{ maxWidth: "200px" }}
@@ -725,18 +818,26 @@ const AdminRoom = () => {
                         </div>
                       )}
                     </div>
+                  </div>
+                </div>
 
+                <div className="row">
+                  <div className="col-12">
                     <div className="mb-3">
                       <label className="form-label">Description *</label>
                       <textarea
-                        className={`form-control ${formErrors.description ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          formErrors.description ? "is-invalid" : ""
+                        }`}
                         name="description"
                         value={formData.description}
                         onChange={handleInputChange}
                         rows="3"
                         required></textarea>
                       {formErrors.description && (
-                        <div className="invalid-feedback">{formErrors.description}</div>
+                        <div className="invalid-feedback">
+                          {formErrors.description}
+                        </div>
                       )}
                     </div>
 
@@ -758,7 +859,9 @@ const AdminRoom = () => {
                         ))}
                       </div>
                       {formErrors.amenities && (
-                        <div className="text-danger small">{formErrors.amenities}</div>
+                        <div className="text-danger small">
+                          {formErrors.amenities}
+                        </div>
                       )}
                     </div>
                   </div>

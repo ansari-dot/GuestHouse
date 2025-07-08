@@ -15,7 +15,7 @@ import {
 } from "react-icons/fa";
 import AdminRoom from "./AdminRoom";
 import AdminBookings from "./AdminBookings";
-import AdminMessages from "./AdminMessages";
+import AdminMessages from "./AdminMessage";
 import {
   LineChart,
   Line,
