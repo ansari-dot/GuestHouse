@@ -1,7 +1,9 @@
 import axios from 'axios';
+//import.meta.env.VITE_API_BASE_URL
+const baseURL =  'https://house-e4xk13qg.b4a.run/api';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL,
   withCredentials: true, // This is important for cookies
   headers: {
     'Content-Type': 'application/json',

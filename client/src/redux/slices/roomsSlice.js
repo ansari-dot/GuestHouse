@@ -2,44 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import axiosInstance from "../../utils/axios"
 
 // Mock data for development (fallback)
-const mockRooms = [
-  {
-    _id: "1",
-    name: "Deluxe Mountain View",
-    type: "Deluxe",
-    description: "Spacious room with panoramic mountain views and modern amenities.",
-    price: 120,
-    capacity: 2,
-    size: 35,
-    amenities: ["WiFi", "AC", "TV", "Balcony"],
-    image: "https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg",
-    available: true,
-  },
-  {
-    _id: "2",
-    name: "Family Suite",
-    type: "Suite",
-    description: "Perfect for families with separate living area and connecting rooms.",
-    price: 200,
-    capacity: 4,
-    size: 65,
-    amenities: ["WiFi", "AC", "TV", "Mini Bar", "Balcony"],
-    image: "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg",
-    available: true,
-  },
-  {
-    _id: "3",
-    name: "Standard Room",
-    type: "Standard",
-    description: "Comfortable room with essential amenities for a pleasant stay.",
-    price: 80,
-    capacity: 2,
-    size: 25,
-    amenities: ["WiFi", "AC", "TV"],
-    image: "https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg",
-    available: true,
-  },
-]
+
 
 export const fetchRooms = createAsyncThunk("rooms/fetchRooms", async (_, { rejectWithValue }) => {
   try {

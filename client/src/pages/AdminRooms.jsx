@@ -16,7 +16,7 @@ const AdminRooms = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterType, setFilterType] = useState("")
   const [filteredRooms, setFilteredRooms] = useState([])
-  const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3000"
+  const backendUrl = 'https://house-e4xk13qg.b4a.run/api';
 
   useEffect(() => {
     dispatch(fetchRooms())

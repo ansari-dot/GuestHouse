@@ -27,7 +27,7 @@ const Contact = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/addFeedback",
+        "https://house-e4xk13qg.b4a.run/api/addFeedback",
         formData
       );
       console.log(response);

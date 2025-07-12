@@ -7,7 +7,7 @@ const Test = () => {
   // Fetch booking data
   const getBooking = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/get/booking");
+      const response = await axios.get("https://house-e4xk13qg.b4a.run/api/get/booking");
       setBookings(response.data);
     } catch (error) {
       console.error("Error fetching bookings:", error);
@@ -18,7 +18,7 @@ const Test = () => {
   const confirmBooking = async (bookingId) => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/confirm/${bookingId}`
+        `https://house-e4xk13qg.b4a.run/api/confirm/${bookingId}`
       );
       if (response.status === 200) {
         alert("Booking confirmed and email sent!");

@@ -40,7 +40,7 @@ const UserProfile = () => {
     confirmPassword: "",
   });
 
-  const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const backendUrl = 'https://house-e4xk13qg.b4a.run/api';
   const profileImageUrl = previewImage ? previewImage : (user?.profileImage ? `${backendUrl}/uploads/${user.profileImage}` : "/default-avatar.png");
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const UserProfile = () => {
   const fetchBookings = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/bookings/user/${user.id}`
+        `${backendUrl}/bookings/user/${user.id}`
       );
       setBookings(response.data);
     } catch (err) {
@@ -103,7 +103,7 @@ const UserProfile = () => {
       }
 
       await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/users/profile`,
+        `${backendUrl}/users/profile`,
         formDataToSend,
         {
           headers: {
@@ -143,7 +143,7 @@ const UserProfile = () => {
     setLoading(true);
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/change-password`,
+        `${backendUrl}/change-password`,
         {
           currentPassword: passwordData.currentPassword,
           newPassword: passwordData.newPassword,

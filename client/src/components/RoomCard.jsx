@@ -5,7 +5,7 @@ import './RoomCard.css'; // We'll create a dedicated CSS file for this component
 
 const RoomCard = ({ room, onClick }) => {
   const { _id, type, description, price, capacity, size, beds, image } = room;
-  const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const backendUrl = 'https://house-e4xk13qg.b4a.run/api';
   const imageUrl = room.image
     ? (room.image.startsWith('http') ? room.image : `${backendUrl}/uploads/${room.image}`)
     : "/default-room.jpg";
