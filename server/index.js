@@ -56,7 +56,7 @@ app.use(cors({
 
 // Additional CORS headers
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', process.env.CLIENT_URL || 'http://localhost:5173');
+    res.header('Access-Control-Allow-Origin',"https://68728fee15a7258f65d0d8a9--sage-panda-b87a5d.netlify.app/");
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
