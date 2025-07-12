@@ -62,7 +62,6 @@ app.use(cors({
 // Additional CORS headers
 app.use((req, res, next) => {
     const allowedOrigins = [
-        'http://localhost:5173',
         'https://68728fee15a7258f65d0d8a9--sage-panda-b87a5d.netlify.app',
         'https://sage-panda-b87a5d.netlify.app', // Add production Netlify domain if available
         'https://meee-4gerxcsv.b4a.run', // Add deployed backend domain for completeness
