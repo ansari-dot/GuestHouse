@@ -60,25 +60,28 @@ app.use(cors({
 }));
 
 // Additional CORS headers
-app.use((req, res, next) => {
-    const allowedOrigins = [
+app.use(cors({
+    origin: [
+        'http://localhost:5173',
         'https://68728fee15a7258f65d0d8a9--sage-panda-b87a5d.netlify.app',
-        'https://sage-panda-b87a5d.netlify.app', // Add production Netlify domain if available
-        'https://meee-4gerxcsv.b4a.run', // Add deployed backend domain for completeness
-    ];
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.header('Access-Control-Allow-Origin', origin);
-    }
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    if (req.method === 'OPTIONS') {
-        res.sendStatus(200);
-    } else {
-        next();
-    }
-});
+        'https://sage-panda-b87a5d.netlify.app', // permanent Netlify URL
+        'https://meee-4gerxcsv.b4a.run', // B4A backend URL (optional)
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'X-Requested-With',
+        'Accept',
+        'Origin',
+        'Access-Control-Allow-Headers',
+        'Access-Control-Allow-Credentials'
+    ],
+    exposedHeaders: ['Set-Cookie'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+}));
 
 // Middleware
 app.use(compression());
@@ -154,7 +157,8 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const PORT = process.env.PORT || "https://house-e4xk13qg.b4a.run/ ";
+const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
