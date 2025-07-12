@@ -37,7 +37,7 @@ app.use(limiter);
 
 // CORS middleware
 app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin:"https://68728fee15a7258f65d0d8a9--sage-panda-b87a5d.netlify.app/"|| "https://house-e4xk13qg.b4a.run/" ,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: [
