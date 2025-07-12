@@ -40,7 +40,7 @@ const UserProfile = () => {
     confirmPassword: "",
   });
 
-  const backendUrl = 'https://house-e4xk13qg.b4a.run/api';
+  const backendUrl = 'https://meee-4gerxcsv.b4a.run/api';
   const profileImageUrl = previewImage ? previewImage : (user?.profileImage ? `${backendUrl}/uploads/${user.profileImage}` : "/default-avatar.png");
 
   useEffect(() => {

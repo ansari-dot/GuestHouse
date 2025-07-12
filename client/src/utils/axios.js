@@ -1,6 +1,6 @@
 import axios from 'axios';
 //import.meta.env.VITE_API_BASE_URL
-const baseURL =  'https://house-e4xk13qg.b4a.run/api';
+const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://meee-4gerxcsv.b4a.run/api';
 
 const axiosInstance = axios.create({
   baseURL,

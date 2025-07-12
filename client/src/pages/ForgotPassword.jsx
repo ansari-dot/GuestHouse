@@ -29,7 +29,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("https://house-e4xk13qg.b4a.run/api/forgot-password", {
+      const response = await axios.post("https://meee-4gerxcsv.b4a.run/api/forgot-password", {
         email: formData.email,
       });
       if (response.data) {
@@ -48,7 +48,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("https://house-e4xk13qg.b4a.run/api/verify-otp", {
+      const response = await axios.post("https://meee-4gerxcsv.b4a.run/api/verify-otp", {
         email: formData.email,
         otp: formData.otp,
       });
@@ -74,7 +74,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("https://house-e4xk13qg.b4a.run/api/reset-password", {
+      const response = await axios.post("https://meee-4gerxcsv.b4a.run/api/reset-password", {
         email: formData.email,
         otp: formData.otp,
         newPassword: formData.newPassword,

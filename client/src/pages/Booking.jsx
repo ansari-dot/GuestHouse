@@ -51,7 +51,7 @@ const Booking = () => {
   const [bookingStatus, setBookingStatus] = useState("pending");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const backendUrl = 'https://house-e4xk13qg.b4a.run/api';
+  const backendUrl = 'https://meee-4gerxcsv.b4a.run/api';
 
   useEffect(() => {
     dispatch(fetchRooms());

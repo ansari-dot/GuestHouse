@@ -29,7 +29,7 @@ const galleryData = {
   ],
 }
 
-const backendUrl = 'https://house-e4xk13qg.b4a.run/api';
+const backendUrl = 'https://meee-4gerxcsv.b4a.run/api';
 
 const getImageUrl = (src) => src ? (src.startsWith('http') ? src : `${backendUrl}/uploads/${src}`) : "/default-room.jpg";
 

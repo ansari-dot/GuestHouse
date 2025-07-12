@@ -40,7 +40,7 @@ const AdminRoom = () => {
     image: null,
   });
 
-  const backendUrl = 'https://house-e4xk13qg.b4a.run/api';
+  const backendUrl = 'https://meee-4gerxcsv.b4a.run/api';
 
   // Available amenities with icons
   const availableAmenities = [

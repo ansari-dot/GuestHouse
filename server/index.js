@@ -37,7 +37,12 @@ app.use(limiter);
 
 // CORS middleware
 app.use(cors({
-    origin:"https://68728fee15a7258f65d0d8a9--sage-panda-b87a5d.netlify.app/"|| "https://house-e4xk13qg.b4a.run/" ,
+    origin: [
+        'http://localhost:5173',
+        'https://68728fee15a7258f65d0d8a9--sage-panda-b87a5d.netlify.app',
+        'https://sage-panda-b87a5d.netlify.app', // Add production Netlify domain if available
+        'https://meee-4gerxcsv.b4a.run', // Add deployed backend domain for completeness
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: [
@@ -56,7 +61,16 @@ app.use(cors({
 
 // Additional CORS headers
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin',"https://68728fee15a7258f65d0d8a9--sage-panda-b87a5d.netlify.app/"|| "https://house-e4xk13qg.b4a.run/");
+    const allowedOrigins = [
+        'http://localhost:5173',
+        'https://68728fee15a7258f65d0d8a9--sage-panda-b87a5d.netlify.app',
+        'https://sage-panda-b87a5d.netlify.app', // Add production Netlify domain if available
+        'https://meee-4gerxcsv.b4a.run', // Add deployed backend domain for completeness
+    ];
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.header('Access-Control-Allow-Origin', origin);
+    }
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');

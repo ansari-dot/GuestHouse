@@ -16,7 +16,7 @@ const AdminRooms = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterType, setFilterType] = useState("")
   const [filteredRooms, setFilteredRooms] = useState([])
-  const backendUrl = 'https://house-e4xk13qg.b4a.run/api';
+  const backendUrl = 'https://meee-4gerxcsv.b4a.run/api';
 
   useEffect(() => {
     dispatch(fetchRooms())

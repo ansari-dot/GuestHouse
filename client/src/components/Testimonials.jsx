@@ -47,7 +47,7 @@ const Testimonials = () => {
       .map((_, index) => <FaStar key={index} className={index < rating ? "star-filled" : "star-empty"} />)
   }
 
-  const backendUrl = 'https://house-e4xk13qg.b4a.run/api';
+  const backendUrl = 'https://meee-4gerxcsv.b4a.run/api';
 
   return (
     <section className="py-5" data-aos="fade-up">

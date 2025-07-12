@@ -22,7 +22,7 @@ const ProfileDropdown = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
-  const backendUrl = 'https://house-e4xk13qg.b4a.run/api';
+  const backendUrl = 'https://meee-4gerxcsv.b4a.run/api';
   const profileImageUrl = user.profileImage ? `${backendUrl}/uploads/${user.profileImage}` : "/default-avatar.png";
 
   useEffect(() => {
