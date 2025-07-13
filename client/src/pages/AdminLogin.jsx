@@ -1,19 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaShieldAlt } from "react-icons/fa";
 import { toast } from "react-toastify";
-import axiosInstance from "../utils/axios";
+import { loginAdmin } from "../redux/slices/authSlice";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.auth);
+  
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     role: "admin", // Always admin for admin login
   });
 
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
@@ -26,26 +29,18 @@ const AdminLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
     try {
-      const response = await axiosInstance.post("/admin/login", formData);
-
-      if (response.data.user?.role === "admin") {
-        // Store admin token if provided
-        if (response.data.token) {
-          localStorage.setItem("adminToken", response.data.token);
-        }
-        
+      const result = await dispatch(loginAdmin(formData)).unwrap();
+      
+      if (result.user?.role === "admin") {
         toast.success("Admin login successful!");
         navigate("/admin");
       } else {
         toast.error("You are not authorized as admin");
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Admin login failed. Please try again.");
-    } finally {
-      setLoading(false);
+      toast.error(err.message || "Admin login failed. Please try again.");
     }
   };
 

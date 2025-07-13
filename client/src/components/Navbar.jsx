@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { Link, NavLink, useLocation } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
 import { toggleDarkMode, toggleRTL } from "../redux/slices/themeSlice"
-import { FaSun, FaMoon, FaGlobe } from "react-icons/fa"
+import { FaSun, FaMoon, FaGlobe, FaShieldAlt } from "react-icons/fa"
 import ProfileDropdown from "./ProfileDropdown"
 
 const Navbar = () => {
@@ -33,7 +33,9 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`navbar navbar-expand-lg fixed-top ${scrolled ? "bg-white shadow" : ""} ${
+      className={`navbar navbar-expand-lg fixed-top ${
+        scrolled ? (darkMode ? "shadow" : "bg-white shadow") : ""
+      } ${
         darkMode ? "navbar-dark" : "navbar-light"
       }`}
       style={{ transition: "all 0.3s ease" }}
@@ -131,6 +133,16 @@ const Navbar = () => {
           </ul>
 
           <div className="d-flex ms-lg-3 mt-3 mt-lg-0">
+            {/* Admin Button */}
+            <Link
+              to="/admin-login"
+              className="btn btn-sm btn-outline-warning me-2"
+              aria-label="Admin Login"
+            >
+              <FaShieldAlt />
+              <span className="ms-1 d-none d-sm-inline">Admin</span>
+            </Link>
+
             <button
               className="btn btn-sm btn-outline-secondary me-2"
               onClick={() => dispatch(toggleDarkMode())}

@@ -5,7 +5,7 @@ import AOS from "aos";
 import { AnimatePresence } from "framer-motion";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-//import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -45,23 +45,23 @@ const routes = [
 
   {
     path: "/profile",
-    element: <UserProfile />,
+    element: <ProtectedRoute><UserProfile /></ProtectedRoute>,
   },
   {
     path: "/admin",
-    element: <AdminDashboard />,
+    element: <ProtectedRoute requireAdmin={true}><AdminDashboard /></ProtectedRoute>,
   },
   {
     path: "/admin/rooms",
-    element: <AdminRooms />,
+    element: <ProtectedRoute requireAdmin={true}><AdminRooms /></ProtectedRoute>,
   },
   {
     path: "/admin/bookings",
-    element: <AdminBookings />,
+    element: <ProtectedRoute requireAdmin={true}><AdminBookings /></ProtectedRoute>,
   },
   {
     path: "/admin/messages",
-    element: <AdminMessages />,
+    element: <ProtectedRoute requireAdmin={true}><AdminMessages /></ProtectedRoute>,
   },
 ];
 

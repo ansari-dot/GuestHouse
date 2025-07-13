@@ -6,7 +6,7 @@ export const getNextRoomNumber = async(req, res) => {
     try {
         const highestRoom = await Room.findOne().sort({ roomNumber: -1 });
         const nextRoomNumber = highestRoom ? highestRoom.roomNumber + 1 : 1;
-        
+
         res.status(200).json({
             nextRoomNumber
         });
@@ -21,11 +21,11 @@ export const getNextRoomNumber = async(req, res) => {
 
 // Add rooms by admin
 export const addRooms = async(req, res) => {
-    const { roomNumber, type, description, price, size, capacity, amenities } = req.body;
+    const { roomName, roomNumber, type, description, price, size, capacity, amenities } = req.body;
     const userId = req.user.id; // Extract user ID from JWT payload
 
     // Validate required fields
-    if (!roomNumber || !type || !description || !price || !size || !capacity) {
+    if (!roomName || !roomNumber || !type || !description || !price || !size || !capacity) {
         return res.status(400).json({
             message: "Please fill all required fields",
         });
@@ -69,6 +69,7 @@ export const addRooms = async(req, res) => {
         const imagePath = req.file ? `http://localhost:3000/uploads/${req.file.filename}` : null;
 
         const newRoom = new Room({
+            roomName,
             roomNumber: Number(roomNumber),
             type,
             description,
@@ -87,14 +88,14 @@ export const addRooms = async(req, res) => {
         });
     } catch (error) {
         console.error("Error adding room:", error);
-        
+
         // Handle MongoDB duplicate key error
         if (error.code === 11000) {
             return res.status(400).json({
                 message: `Room number ${roomNumber} already exists. Please choose a different room number.`,
             });
         }
-        
+
         res.status(500).json({
             message: "Server error",
             error: error.message,
@@ -111,7 +112,7 @@ export const getRooms = async(req, res) => {
                 message: "No rooms found",
             });
         }
-        
+
         // Ensure all rooms have proper image URLs
         const roomsWithImages = rooms.map(room => {
             const roomObj = room.toObject();
@@ -120,7 +121,7 @@ export const getRooms = async(req, res) => {
             }
             return roomObj;
         });
-        
+
         res.status(200).json(roomsWithImages);
     } catch (error) {
         console.error("Error fetching rooms:", error);
@@ -154,7 +155,7 @@ export const updateRoom = async(req, res) => {
         }
 
         // Check if room number already exists (excluding current room)
-        const existingRoom = await Room.findOne({ 
+        const existingRoom = await Room.findOne({
             roomNumber: Number(roomNumber),
             _id: { $ne: id } // Exclude current room from check
         });
@@ -219,14 +220,14 @@ export const updateRoom = async(req, res) => {
         });
     } catch (error) {
         console.error("Error updating room:", error);
-        
+
         // Handle MongoDB duplicate key error
         if (error.code === 11000) {
             return res.status(400).json({
                 message: `Room number ${roomNumber} already exists. Please choose a different room number.`,
             });
         }
-        
+
         res.status(500).json({
             message: "Server error",
             error: error.message,
@@ -283,7 +284,7 @@ export const filterRooms = async(req, res) => {
         if (capacity) filter.capacity = { $gte: Number(capacity) };
 
         const rooms = await Room.find(filter).sort({ roomNumber: 1 });
-        
+
         // Ensure all rooms have proper image URLs
         const roomsWithImages = rooms.map(room => {
             const roomObj = room.toObject();

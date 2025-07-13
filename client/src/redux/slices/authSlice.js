@@ -41,6 +41,29 @@ export const loginUser = createAsyncThunk("/login", async(credentials, { rejectW
     }
 })
 
+export const loginAdmin = createAsyncThunk("/admin/login", async(credentials, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.post("/admin/login", credentials)
+        
+        // Verify that the user is actually an admin
+        if (response.data.user?.role !== "admin") {
+            return rejectWithValue({ message: "You are not authorized as admin" })
+        }
+        
+        // Store auth state in localStorage
+        const authState = {
+            user: response.data.user,
+            isAuthenticated: true,
+            loading: false,
+            error: null,
+        };
+        localStorage.setItem('authState', JSON.stringify(authState));
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response?.data || { message: "Admin login failed" })
+    }
+})
+
 export const checkAuthStatus = createAsyncThunk(
     "auth/checkStatus",
     async(_, { rejectWithValue, getState }) => {
@@ -65,6 +88,19 @@ export const checkAuthStatus = createAsyncThunk(
 )
 
 export const logoutUser = createAsyncThunk("auth/logout", async() => {
+    try {
+        await axiosInstance.post("/logout")
+        // Clear auth state from localStorage
+        localStorage.removeItem('authState')
+        return null
+    } catch (error) {
+        // Clear localStorage even if logout request fails
+        localStorage.removeItem('authState')
+        return null
+    }
+})
+
+export const logoutAdmin = createAsyncThunk("auth/logoutAdmin", async() => {
     try {
         await axiosInstance.post("/logout")
         // Clear auth state from localStorage
@@ -119,6 +155,29 @@ const authSlice = createSlice({
                 state.isAuthenticated = false
                 state.user = null
             })
+            .addCase(loginAdmin.pending, (state) => {
+                state.loading = true
+                state.error = null
+            })
+            .addCase(loginAdmin.fulfilled, (state, action) => {
+                state.loading = false
+                state.user = action.payload.user
+                state.isAuthenticated = true
+                state.error = null
+                // Update localStorage
+                localStorage.setItem('authState', JSON.stringify({
+                    user: action.payload.user,
+                    isAuthenticated: true,
+                    loading: false,
+                    error: null,
+                }));
+            })
+            .addCase(loginAdmin.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.payload?.message || "Admin login failed"
+                state.isAuthenticated = false
+                state.user = null
+            })
             .addCase(checkAuthStatus.pending, (state) => {
                 state.loading = true
             })
@@ -146,6 +205,13 @@ const authSlice = createSlice({
                 }
             })
             .addCase(logoutUser.fulfilled, (state) => {
+                state.user = null
+                state.isAuthenticated = false
+                state.error = null
+                // Clear localStorage
+                localStorage.removeItem('authState')
+            })
+            .addCase(logoutAdmin.fulfilled, (state) => {
                 state.user = null
                 state.isAuthenticated = false
                 state.error = null

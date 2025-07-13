@@ -22,8 +22,13 @@ axiosInstance.interceptors.response.use(
       if (!isAuthPage && !isAuthCheck) {
         // Clear any stored auth state
         localStorage.removeItem('authState');
-        // Redirect to login
-        window.location.href = '/login';
+        
+        // Redirect to appropriate login page based on current route
+        if (currentPath.startsWith('/admin')) {
+          window.location.href = '/admin-login';
+        } else {
+          window.location.href = '/login';
+        }
       }
     }
     return Promise.reject(error);

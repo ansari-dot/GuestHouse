@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import axiosInstance from "../utils/axios";
+import { logoutAdmin } from "../redux/slices/authSlice";
 import {
   FaHotel,
   FaCalendarAlt,
@@ -33,8 +35,9 @@ import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
 
-  const [user, setUser] = useState(null);
   const [dashboardStats, setDashboardStats] = useState({
     rooms: { total: 0, available: 0, occupied: 0 },
     bookings: { total: 0, confirmed: 0, pending: 0, cancelled: 0, revenue: 0 },
@@ -62,21 +65,6 @@ const AdminDashboard = () => {
   const COLORS = ["#4e73df", "#1cc88a", "#36b9cc"];
 
   useEffect(() => {
-    const verifyAdmin = async () => {
-      try {
-        const res = await axiosInstance.get("/admin");
-
-        if (res.data.success && res.data.user.role === "admin") {
-          setUser(res.data.user);
-        } else {
-          navigate("/admin-login");
-        }
-      } catch (err) {
-        console.error("Admin verification failed:", err);
-        navigate("/admin-login");
-      }
-    };
-
     const fetchDashboard = async () => {
       try {
         const res = await axiosInstance.get("/dashboard/stats");
@@ -89,13 +77,18 @@ const AdminDashboard = () => {
       }
     };
 
-    verifyAdmin().then(fetchDashboard);
-  }, [navigate]);
+    fetchDashboard();
+  }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("adminToken");
-    document.cookie = "token=; Max-Age=0; path=/";
-    navigate("/admin-login");
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutAdmin()).unwrap();
+      navigate("/admin-login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Still navigate to login even if logout fails
+      navigate("/admin-login");
+    }
   };
 
   if (loading) {

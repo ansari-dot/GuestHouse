@@ -168,6 +168,134 @@
   margin: 8px 0;
 }
 
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .profile-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .profile-header {
+    padding: 20px;
+    flex-shrink: 0;
+  }
+
+  .profile-header-content {
+    gap: 16px;
+  }
+
+  .profile-image-large {
+    width: 60px;
+    height: 60px;
+  }
+
+  .profile-icon-large {
+    font-size: 60px;
+  }
+
+  .profile-title h3 {
+    font-size: 18px;
+  }
+
+  .profile-title p {
+    font-size: 16px;
+  }
+
+  .close-button {
+    top: 16px;
+    right: 16px;
+    padding: 8px;
+    font-size: 20px;
+  }
+
+  .profile-actions {
+    flex-grow: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .action-button {
+    padding: 16px;
+    font-size: 16px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+  }
+
+  .action-button svg {
+    font-size: 18px;
+  }
+
+  .divider {
+    margin: 16px 0;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .profile-header {
+    padding: 24px 20px;
+  }
+
+  .profile-actions {
+    padding: 24px 20px;
+  }
+
+  .action-button {
+    padding: 18px 16px;
+    font-size: 16px;
+  }
+
+  .profile-title h3 {
+    font-size: 20px;
+  }
+
+  .profile-title p {
+    font-size: 16px;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .profile-menu {
+    justify-content: center;
+  }
+
+  .profile-header {
+    padding: 16px 20px;
+  }
+
+  .profile-actions {
+    padding: 16px 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+}
+
 /* Dark mode adjustments */
 [data-theme="dark"] .profile-menu {
   background: var(--dark-bg);
@@ -203,4 +331,17 @@
 [dir="rtl"] .close-button {
   right: auto;
   left: 8px;
+}
+
+/* RTL mobile adjustments */
+@media (max-width: 768px) {
+  [dir="rtl"] .profile-menu {
+    left: 0;
+    right: 0;
+  }
+  
+  [dir="rtl"] .close-button {
+    left: 16px;
+    right: auto;
+  }
 } 

@@ -25,6 +25,9 @@ const ProfileDropdown = () => {
   const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const profileImageUrl = user.profileImage ? `${backendUrl}/uploads/${user.profileImage}` : "/default-avatar.png";
 
+  // Check if we're on mobile
+  const isMobile = window.innerWidth <= 768;
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -32,9 +35,36 @@ const ProfileDropdown = () => {
       }
     };
 
+    // Prevent body scroll when dropdown is open on mobile
+    if (isOpen && isMobile) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, isMobile]);
+
+  // Handle escape key
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen]);
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -64,6 +94,7 @@ const ProfileDropdown = () => {
         className="profile-button"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Profile menu"
+        aria-expanded={isOpen}
       >
         {user?.profileImage ? (
           <img 
@@ -77,7 +108,7 @@ const ProfileDropdown = () => {
       </button>
 
       {isOpen && (
-        <div className="profile-menu">
+        <div className="profile-menu" role="dialog" aria-modal="true">
           <div className="profile-header">
             <div className="profile-header-content">
               <div className="profile-avatar">
@@ -106,20 +137,36 @@ const ProfileDropdown = () => {
           </div>
 
           <div className="profile-actions">
-            <button className="action-button" onClick={handleViewProfile}>
+            <button 
+              className="action-button" 
+              onClick={handleViewProfile}
+              aria-label="View profile"
+            >
               <FaRegIdCard />
               <span>View Profile</span>
             </button>
-            <button className="action-button" onClick={handleViewBookings}>
+            <button 
+              className="action-button" 
+              onClick={handleViewBookings}
+              aria-label="View my bookings"
+            >
               <FaHistory />
               <span>My Bookings</span>
             </button>
-            <button className="action-button" onClick={handleSettings}>
+            <button 
+              className="action-button" 
+              onClick={handleSettings}
+              aria-label="Settings"
+            >
               <FaCog />
               <span>Settings</span>
             </button>
             <div className="divider"></div>
-            <button className="action-button logout-button" onClick={handleLogout}>
+            <button 
+              className="action-button logout-button" 
+              onClick={handleLogout}
+              aria-label="Logout"
+            >
               <FaSignOutAlt />
               <span>Logout</span>
             </button>
