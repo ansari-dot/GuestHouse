@@ -11,7 +11,7 @@
              filename
          );
 
-         const downloadLink = `http://localhost:3000/pdf/download/${filename}`;
+         const downloadLink = `${process.env.CLIENT_URL || `http://localhost:${process.env.PORT || 5000}`}/pdf/download/${filename}`;
 
          const transporter = nodemailer.createTransport({
              service: "gmail",

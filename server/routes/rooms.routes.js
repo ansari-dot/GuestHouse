@@ -1,7 +1,7 @@
 import express from 'express';
 import { addRooms, getRooms, updateRoom, deleteRoom, filterRooms, getNextRoomNumber } from '../controllers/rooms.js';
 import { uploadSingleImage } from '../utils/multer.js';
-import { auth } from '../middlewares/authMiddleware.js'
+import { auth } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 

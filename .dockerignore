@@ -14,4 +14,9 @@ coverage
 dist
 build
 .vscode
-.idea 
+.idea
+.env.example
+DEPLOYMENT.md
+QUICK_DEPLOY.md
+deploy.sh
+deploy.bat 

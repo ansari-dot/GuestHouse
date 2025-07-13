@@ -20,6 +20,7 @@
  import bookingRoutes from './routes/booking.routes.js';
  import messageRoutes from './routes/message.routes.js';
  import adminRoutes from './routes/admin.routes.js';
+ import pdfRoutes from './routes/pdf.routes.js';
 
  dotenv.config();
 
@@ -51,7 +52,7 @@
 
  // CORS middleware for all routes
  app.use(cors({
-     origin: process.env.CLIENT_URL || 'http://localhost:5173',
+     origin: process.env.CLIENT_URL || `http://localhost:${process.env.PORT || 5000}`,
      credentials: true,
      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
      allowedHeaders: [
@@ -70,7 +71,7 @@
 
  // Additional CORS handling for preflight requests
  app.use((req, res, next) => {
-     res.header('Access-Control-Allow-Origin', process.env.CLIENT_URL || 'http://localhost:5173');
+     res.header('Access-Control-Allow-Origin', process.env.CLIENT_URL || `http://localhost:${process.env.PORT || 5000}`);
      res.header('Access-Control-Allow-Credentials', 'true');
      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -95,8 +96,8 @@
  // Serve frontend static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Image serving with error handling
-app.get('/image/:filename', (req, res) => {
+// Image serving with error handling - moved before catch-all
+app.get('/api/image/:filename', (req, res) => {
     const filePath = path.join(__dirname, 'uploads', req.params.filename);
     fs.access(filePath, fs.constants.F_OK, (err) => {
         if (err) {
@@ -118,6 +119,12 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api', bookingRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api', adminRoutes);
+app.use('/api/pdf', pdfRoutes);
+
+// Test route
+app.get('/api/test', (req, res) => {
+    res.json({ message: 'API test route works' });
+});
 
 // Protected routes
 app.get('/api/dashboard', auth, (req, res) => {
@@ -126,6 +133,11 @@ app.get('/api/dashboard', auth, (req, res) => {
 
 app.get('/api/getFeedback', auth, (req, res) => {
     res.json({ message: 'Feedback data' });
+});
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'healthy' });
 });
 
 // Error handling middleware
@@ -139,15 +151,10 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'healthy' });
-});
-
-// Catch-all route to serve React app for any non-API route
+// Catch-all route to serve React app for any non-API route (must be last)
 app.get('*', (req, res) => {
-    // If the request starts with /api or /uploads, skip
-    if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/image')) {
+    // Skip API routes, uploads, and health check
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path === '/health') {
         return res.status(404).json({ error: 'Not found' });
     }
     res.sendFile(path.join(__dirname, 'public', 'index.html'));

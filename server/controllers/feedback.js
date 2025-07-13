@@ -1,5 +1,5 @@
 import Feedback from "../models/FeedBack.js";
-import User from '../models/User.js'
+import User from '../models/User.js';
 // to add the feedback form
 export const addFeedback = async(req, res) => {
         const { name, email, subject, message } = req.body;

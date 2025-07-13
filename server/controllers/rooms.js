@@ -66,7 +66,8 @@ export const addRooms = async(req, res) => {
         }
 
         // Handle single image upload
-        const imagePath = req.file ? `http://localhost:3000/uploads/${req.file.filename}` : null;
+        const baseUrl = process.env.CLIENT_URL || `http://localhost:${process.env.PORT || 5000}`;
+        const imagePath = req.file ? `${baseUrl}/uploads/${req.file.filename}` : null;
 
         const newRoom = new Room({
             roomName,
@@ -117,7 +118,8 @@ export const getRooms = async(req, res) => {
         const roomsWithImages = rooms.map(room => {
             const roomObj = room.toObject();
             if (roomObj.image && !roomObj.image.startsWith('http')) {
-                roomObj.image = `http://localhost:3000${roomObj.image}`;
+                const baseUrl = process.env.CLIENT_URL || `http://localhost:${process.env.PORT || 5000}`;
+                roomObj.image = `${baseUrl}${roomObj.image}`;
             }
             return roomObj;
         });
@@ -183,7 +185,8 @@ export const updateRoom = async(req, res) => {
         }
 
         // Handle single image upload
-        const imagePath = req.file ? `http://localhost:3000/uploads/${req.file.filename}` : undefined;
+        const baseUrl = process.env.CLIENT_URL || `http://localhost:${process.env.PORT || 5000}`;
+        const imagePath = req.file ? `${baseUrl}/uploads/${req.file.filename}` : undefined;
 
         // Prepare update object
         const updateData = {
@@ -211,7 +214,8 @@ export const updateRoom = async(req, res) => {
         // Ensure proper image URL
         const roomObj = updatedRoom.toObject();
         if (roomObj.image && !roomObj.image.startsWith('http')) {
-            roomObj.image = `http://localhost:3000${roomObj.image}`;
+            const baseUrl = process.env.CLIENT_URL || `http://localhost:${process.env.PORT || 5000}`;
+            roomObj.image = `${baseUrl}${roomObj.image}`;
         }
 
         res.status(200).json({
@@ -289,7 +293,8 @@ export const filterRooms = async(req, res) => {
         const roomsWithImages = rooms.map(room => {
             const roomObj = room.toObject();
             if (roomObj.image && !roomObj.image.startsWith('http')) {
-                roomObj.image = `http://localhost:3000${roomObj.image}`;
+                const baseUrl = process.env.CLIENT_URL || `http://localhost:${process.env.PORT || 5000}`;
+                roomObj.image = `${baseUrl}${roomObj.image}`;
             }
             return roomObj;
         });
