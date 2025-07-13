@@ -92,58 +92,70 @@
  // Static files
  app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
- // Image serving with error handling
- app.get('/image/:filename', (req, res) => {
-     const filePath = path.join(__dirname, 'uploads', req.params.filename);
-     fs.access(filePath, fs.constants.F_OK, (err) => {
-         if (err) {
-             console.error(`Image not found: ${req.params.filename}`);
-             return res.status(404).json({ error: "Image not found" });
-         }
-         res.sendFile(filePath);
-     });
- });
+ // Serve frontend static files
+app.use(express.static(path.join(__dirname, 'public')));
 
- // DB connect
- connectDB();
+// Image serving with error handling
+app.get('/image/:filename', (req, res) => {
+    const filePath = path.join(__dirname, 'uploads', req.params.filename);
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            console.error(`Image not found: ${req.params.filename}`);
+            return res.status(404).json({ error: "Image not found" });
+        }
+        res.sendFile(filePath);
+    });
+});
 
- // API Routes
- app.use('/api', UserRoutes);
- app.use('/api', RoomsRoutes);
- app.use('/api', FeedbackRoutes);
- app.use('/api/dashboard', dashboardRoutes);
- app.use('/api', bookingRoutes);
- app.use('/api/messages', messageRoutes);
- app.use('/api', adminRoutes);
+// DB connect
+connectDB();
 
- // Protected routes
- app.get('/api/dashboard', auth, (req, res) => {
-     res.json({ message: 'Dashboard data' });
- });
+// API Routes
+app.use('/api', UserRoutes);
+app.use('/api', RoomsRoutes);
+app.use('/api', FeedbackRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api', bookingRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api', adminRoutes);
 
- app.get('/api/getFeedback', auth, (req, res) => {
-     res.json({ message: 'Feedback data' });
- });
+// Protected routes
+app.get('/api/dashboard', auth, (req, res) => {
+    res.json({ message: 'Dashboard data' });
+});
 
- // Error handling middleware
- app.use((err, req, res, next) => {
-     console.error(err.stack);
-     res.status(err.status || 500).json({
-         error: {
-             message: err.message || 'Internal Server Error',
-             status: err.status || 500
-         }
-     });
- });
+app.get('/api/getFeedback', auth, (req, res) => {
+    res.json({ message: 'Feedback data' });
+});
 
- // Health check endpoint
- app.get('/health', (req, res) => {
-     res.status(200).json({ status: 'healthy' });
- });
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.status || 500).json({
+        error: {
+            message: err.message || 'Internal Server Error',
+            status: err.status || 500
+        }
+    });
+});
 
- const PORT = process.env.PORT || 3000;
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'healthy' });
+});
 
- app.listen(PORT, () => {
-     console.log(`Server is running on port ${PORT}`);
-     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
- });
+// Catch-all route to serve React app for any non-API route
+app.get('*', (req, res) => {
+    // If the request starts with /api or /uploads, skip
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/image')) {
+        return res.status(404).json({ error: 'Not found' });
+    }
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+});
