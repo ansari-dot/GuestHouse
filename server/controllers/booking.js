@@ -273,3 +273,13 @@ export const getUserBookings = async(req, res) => {
         });
     }
 };
+
+// Get all confirmed bookings
+export const getConfirmedBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find({ status: 'confirmed' });
+    res.json(bookings);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch confirmed bookings" });
+  }
+};

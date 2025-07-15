@@ -17,8 +17,10 @@ const Rooms = () => {
   const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
   useEffect(() => {
-    dispatch(fetchRooms());
-  }, [dispatch]);
+    if (!rooms || rooms.length === 0) {
+      dispatch(fetchRooms());
+    }
+  }, [dispatch, rooms]);
 
   useEffect(() => {
     if (location.state?.selectedRoomId && rooms.length > 0) {

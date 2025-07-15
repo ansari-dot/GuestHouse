@@ -15,8 +15,10 @@ const Home = () => {
   const { rooms, loading, error } = useSelector((state) => state.rooms)
 
   useEffect(() => {
-    dispatch(fetchRooms())
-  }, [dispatch])
+    if (!rooms || rooms.length === 0) {
+      dispatch(fetchRooms());
+    }
+  }, [dispatch, rooms]);
 
   const handleRoomClick = (room) => {
     navigate(`/rooms`, { state: { selectedRoomId: room._id } });

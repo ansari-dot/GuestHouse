@@ -11,12 +11,12 @@ export const getDashboardStats = async (req, res) => {
         const occupiedRooms = totalRooms - availableRooms;
 
         const totalBookings = await Booking.countDocuments();
-        const confirmedBookings = await Booking.countDocuments({ status: 'Confirmed' });
-        const pendingBookings = await Booking.countDocuments({ status: 'Pending' });
-        const cancelledBookings = await Booking.countDocuments({ status: 'Cancelled' });
+        const confirmedBookings = await Booking.countDocuments({ status: 'confirmed' });
+        const pendingBookings = await Booking.countDocuments({ status: 'pending' });
+        const cancelledBookings = await Booking.countDocuments({ status: 'cancelled' });
 
         // Calculate total revenue from confirmed bookings
-        const confirmedBookingsData = await Booking.find({ status: 'Confirmed' });
+        const confirmedBookingsData = await Booking.find({ status: 'confirmed' });
         const totalRevenue = confirmedBookingsData.reduce((sum, booking) => sum + booking.totalAmount, 0);
 
         const totalMessages = await Message.countDocuments();
