@@ -156,6 +156,16 @@
     }
 }
 
+@media (max-width: 991.98px) {
+  .admin-dashboard .navbar-nav .nav-link {
+    color: #222 !important;
+  }
+  .admin-dashboard .navbar-nav .nav-link.active {
+    color: #10375c !important;
+    background: none;
+  }
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
