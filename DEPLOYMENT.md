@@ -302,3 +302,86 @@ docker-compose up -d --build
 docker-compose pull
 docker-compose up -d
 ``` 
+
+Thank you for sharing the error details:
+
+```
+GET http://localhost:3000/login 429 (Too Many Requests)
+GET http://localhost:3000/favicon.ico 429 (Too Many Requests)
+```
+
+This means your server (or the Back4App proxy) is returning HTTP 429 errors, which is a rate limit response.
+
+---
+
+## Why is this happening?
+
+- **/login** is being requested as a GET, but in most modern apps, `/login` should be a POST API call, not a GET page load.
+- If you visit `/login` directly in the browser, your server tries to serve a React route, but if your backend is rate-limited or misconfigured, it may return 429.
+- The favicon request is normal, but it also gets rate-limited if the server is already overloaded.
+
+---
+
+## What to check and fix
+
+### 1. **Are you visiting `/login` directly in the browser?**
+- If yes, your backend should serve `index.html` for all non-API routes (so React Router can handle it).
+- If your server is not doing this, or if it is overloaded, you get 429.
+
+### 2. **Check for Infinite Loops or Rapid Requests**
+- If your frontend is stuck in a redirect or reload loop (for example, if it keeps trying to access `/login` and gets redirected back), it can quickly hit the rate limit.
+
+### 3. **Check Your Backend Catch-All Route**
+Your backend should have this at the end of your routes (which you do):
+
+```js
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+```
+
+But if your server is overloaded or misconfigured, it may not serve the file.
+
+---
+
+## How to Fix
+
+### **A. Wait for the Rate Limit to Reset**
+- Wait 5–10 minutes and try again.
+
+### **B. Make Sure Your Dockerfile and Build Are Correct**
+- You already have a correct Dockerfile and build process.
+- Make sure you are not running multiple containers or old versions.
+
+### **C. Check for Loops in Your Frontend**
+- Make sure your frontend is not stuck in a redirect loop (for example, redirecting to `/login` over and over).
+
+### **D. Check Your Server Logs on Back4App**
+- Look for errors or warnings about too many requests, or about failing to serve `index.html`.
+
+### **E. Test Locally**
+- Run your Docker image locally:
+  ```sh
+  docker build -t guesthouse-app .
+  docker run -p 5000:5000 guesthouse-app
+  ```
+- Visit [http://localhost:5000/login](http://localhost:5000/login)
+- If you see your React login page, your Dockerfile and build are correct.
+
+---
+
+## If the Problem Persists
+
+- Let me know if you see any errors in your server logs on Back4App.
+- Tell me if you are using any frontend code that could cause repeated requests or redirects.
+- If you want, share your `client/src/components/ProtectedRoute.jsx` or routing logic for review.
+
+---
+
+**Summary:**  
+- 429 means rate limit.  
+- Wait a few minutes, then try again.  
+- Make sure your frontend is not causing repeated requests.  
+- Test your Docker image locally to confirm it works before deploying.
+
+If you want, I can review your routing or login logic for possible infinite loops. Just let me know! 
