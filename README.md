@@ -205,3 +205,43 @@ This project is licensed under the MIT License.
 ## Support
 
 For support and questions, please contact the development team. 
+
+# GuestHouse - Docker Deployment Guide
+
+## 🚀 Deploy with Docker (Single Container)
+
+This project is ready for deployment on any platform that supports Docker (including 4app) using a single Dockerfile.
+
+### Build the Docker image
+
+```sh
+docker build -t guesthouse-app .
+```
+
+### Run the Docker container
+
+```sh
+docker run -p 5000:5000 guesthouse-app
+```
+
+- The app will be available at [http://localhost:5000](http://localhost:5000)
+- Both the **frontend** (React) and **backend** (Node.js/Express API) are served from the same container and port.
+
+---
+
+## Environment Variables
+
+You can set environment variables at runtime (e.g., in your cloud provider's dashboard or with `-e` flags):
+- `PORT` (default: 5000)
+- `MONGODB_URI` (your MongoDB connection string)
+- `JWT_SECRET` (your JWT secret)
+- `CLIENT_URL` (default: http://localhost:5000)
+
+---
+
+## Project Structure
+
+- The Dockerfile builds the frontend and copies it into the backend's `public` folder.
+- Only the main `Dockerfile` is needed for deployment.
+
+--- 
