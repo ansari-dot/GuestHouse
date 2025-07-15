@@ -97,7 +97,7 @@
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Image serving with error handling - moved before catch-all
-app.get('/api/image/:filename', (req, res) => {
+/*app.get('/api/image/:filename', (req, res) => {
     const filePath = path.join(__dirname, 'uploads', req.params.filename);
     fs.access(filePath, fs.constants.F_OK, (err) => {
         if (err) {
@@ -107,7 +107,7 @@ app.get('/api/image/:filename', (req, res) => {
         res.sendFile(filePath);
     });
 });
-
+ */
 // DB connect
 connectDB();
 

@@ -1,13 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaBed, FaUsers, FaRulerCombined } from 'react-icons/fa';
-import './RoomCard.css'; // We'll create a dedicated CSS file for this component
+import './RoomCard.css';
 
 const RoomCard = ({ room, onClick }) => {
   const { _id, type, description, price, capacity, size, beds, image } = room;
   const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
-  const imageUrl = room.image
-    ? (room.image.startsWith('http') ? room.image : `${backendUrl}/uploads/${room.image}`)
+
+  // ✅ Clean image URL logic
+  const imageUrl = image
+    ? (image.startsWith('http') ? image : `${backendUrl}/uploads/${image}`)
     : "/default-room.jpg";
 
   const cardVariants = {
@@ -35,9 +37,10 @@ const RoomCard = ({ room, onClick }) => {
         src={imageUrl}
         className="bg-image"
         alt={type || "Room"}
+        loading="lazy" // ✅ prevents browser from loading all images at once
         onError={(e) => {
           e.target.onerror = null;
-          e.target.src = "/default-room.jpg";
+          e.target.src = "/default-room.jpg"; // fallback to local cached image
         }}
       />
       <div className="overlay"></div>
